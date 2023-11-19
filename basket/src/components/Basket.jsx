@@ -3,17 +3,19 @@ import { GlobalContext } from "../contexts/GlobalContext";
 
 const Basket = () => {
   const { state, dispatch } = useContext(GlobalContext);
-
+  
   useEffect(() => {
-    const storedData = localStorage.getItem("basket");
-    if (storedData) {
-      dispatch({ type: "GET_LOCAL_STORAGE", payload: JSON.parse(storedData) });
-    }
+    dispatch({ type: "GET_LOCAL_STORAGE"});
   }, []);
-
 
   return (
     <>
+      <button
+        className="bg-red-500 py-1  px-2 md:px-4 m-8 rounded-md text-white"
+        onClick={() => dispatch({ type: "ALLDELETE" })}
+      >
+        Remove All Products
+      </button>
       <div>
         <ul className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-4 ">
           {state.basket.length > 0 ? (
@@ -57,6 +59,17 @@ const Basket = () => {
                       }
                     >
                       +
+                    </button>
+                  </div>
+
+                  <div className="flex justify-center items-center">
+                    <button
+                      className="bg-red-700 py-1 my-2 px-2 md:px-4 rounded-md text-white"
+                      onClick={() =>
+                        dispatch({ type: "DELETE", payload: product })
+                      }
+                    >
+                      Delete
                     </button>
                   </div>
                 </div>

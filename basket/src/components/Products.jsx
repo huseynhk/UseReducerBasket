@@ -1,7 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { GlobalContext } from "../contexts/GlobalContext";
 import { GetProducts } from "../api/GetRequest";
-import { Link } from "react-router-dom";
 
 const Products = () => {
   const { state, dispatch } = useContext(GlobalContext);
@@ -17,7 +16,6 @@ const Products = () => {
 
   return (
     <>
-    <Link to={'/basket'}>Basket</Link>
       <div>
         <ul className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-4 ">
           {state.data.map((product) => (
