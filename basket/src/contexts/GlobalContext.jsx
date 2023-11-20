@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useEffect } from "react";
+import React, { createContext, useReducer } from "react";
 import { toast } from "react-toastify";
 
 const GlobalContext = createContext();
@@ -7,6 +7,7 @@ const initialState = {
   basket: [],
   totalCount: 0,
   totalPrice: 0,
+  filteredData: [],
 };
 
 // {...state , basket:[...state.basket,{...action.payload , count:1} , totalCount:state.totalCount + 1]}
@@ -110,6 +111,12 @@ const reducer = (state, action) => {
       localStorage.removeItem("basket");
       return { ...state, basket: [], totalCount: 0, totalPrice: 0 };
 
+    case "SET_FILTER":
+      return { ...state, filteredData: action.payload };
+
+    case "RESET":
+      return { ...state, filteredData: state.data };
+
     default:
       return state;
   }
@@ -118,9 +125,48 @@ const reducer = (state, action) => {
 const GlobalProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  const filterProducts = (event) => {
+    const searchValue = event.target.value.toLowerCase();
+    const searchData = [...state.data];
+    const filteredProduct = searchData.filter((product) => {
+      return (
+        product.title.toLowerCase().includes(searchValue) ||
+        product.brand.toLowerCase().includes(searchValue)
+      );
+    });
+    dispatch({ type: "SET_FILTER", payload: filteredProduct });
+  };
+
+  const searchProducts = (event) => {
+    const searchValue = event.target.value;
+    const searchData = [...state.filteredData];
+
+    searchData.sort((a, b) => {
+      switch (searchValue) {
+        case "title":
+          return a.title.localeCompare(b.title);
+
+        case "brand":
+          return a.brand.localeCompare(b.brand);
+
+        case "price-low-to-high":
+          return a.price - b.price;
+
+        case "price-high-to-low":
+          return b.price - a.price;
+
+        default:
+          return 0;
+      }
+    });
+    dispatch({ type: "SET_FILTER", payload: searchData });
+  };
+
   const contextValue = {
     state,
     dispatch,
+    filterProducts,
+    searchProducts,
   };
   return (
     <GlobalContext.Provider value={contextValue}>

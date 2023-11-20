@@ -1,11 +1,12 @@
 import React, { useContext, useEffect } from "react";
 import { GlobalContext } from "../contexts/GlobalContext";
+import { FaTrashAlt } from "react-icons/fa";
 
 const Basket = () => {
   const { state, dispatch } = useContext(GlobalContext);
-  
+
   useEffect(() => {
-    dispatch({ type: "GET_LOCAL_STORAGE"});
+    dispatch({ type: "GET_LOCAL_STORAGE" });
   }, []);
 
   return (
@@ -64,19 +65,21 @@ const Basket = () => {
 
                   <div className="flex justify-center items-center">
                     <button
-                      className="bg-red-700 py-1 my-2 px-2 md:px-4 rounded-md text-white"
+                      className="bg-violet-100 py-1 my-2 px-2 md:px-4 rounded-md text-white"
                       onClick={() =>
                         dispatch({ type: "DELETE", payload: product })
                       }
                     >
-                      Delete
+                      <FaTrashAlt size={30} color="red" />
                     </button>
                   </div>
                 </div>
               </li>
             ))
           ) : (
-            <p>Your basket is empty</p>
+            <h1 className="mx-auto mt-24 text-4xl text-red-100">
+              Your Basket is Empty...
+            </h1>
           )}
         </ul>
       </div>

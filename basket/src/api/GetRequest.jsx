@@ -13,4 +13,17 @@ export const GetProducts = async () => {
   }
 };
 
-
+export const GetSingleProduct = async (productId) => {
+  try {
+    const response = await axios.get(
+      `https://dummyjson.com/products/${productId}`
+    );
+    if (response.status !== 200) {
+      throw new Error("Error");
+    } else {
+      return response.data;
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+};
