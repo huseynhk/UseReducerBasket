@@ -72,22 +72,15 @@ const Products = () => {
                 <p className="text-gray-600 mb-2 font-semibold">
                   {product.description.slice(0, 30)}
                 </p>
-                <strong className="text-pink-600">${product.price}</strong>
+                <strong className="text-cyan-700">${product.price}</strong>
                 <div className="mt-2">
                   <p className="text-gray-600 my-3 font-semibold">
                     Brand: {product.brand}
                   </p>
 
                   <div className="flex justify-center items-center flex-col">
-                    <Link
-                      to={`${ROUTER.Detail}/${product.id}`}
-                      className="mb-3"
-                    >
-                      <FaEye size={40} color="blue" />
-                    </Link>
-
                     <button
-                      className="bg-gray-700 text-white px-4 py-1 rounded-md"
+                      className="bg-gray-700 text-white px-6 py-1 rounded-md my-2"
                       onClick={() =>
                         dispatch({
                           type: "ADD_TO_CART",
@@ -102,23 +95,30 @@ const Products = () => {
                         : "Add To Cart"}
                     </button>
 
-                    <button
-                      className=" text-white px-4 py-1 mt-1 rounded-md"
-                      onClick={() =>
-                        dispatch({
-                          type: "SET_FAVORITE",
-                          payload: product,
-                        })
-                      }
-                    >
-                      {state.favoriteProducts.find(
-                        (favoriteProduct) => favoriteProduct.id === product.id
-                      ) ? (
-                        <FaHeart color="red" size={40} />
-                      ) : (
-                        <FaRegHeart color="red" size={40} />
-                      )}
-                    </button>
+                    <div className="flex justify-center items-center">
+                      <button className="mt-1">
+                        <Link to={`${ROUTER.Detail}/${product.id}`}>
+                          <FaEye size={50} color="blue" />
+                        </Link>
+                      </button>
+                      <button
+                        className=" text-white px-4 py-1 mt-1 rounded-md"
+                        onClick={() =>
+                          dispatch({
+                            type: "SET_FAVORITE",
+                            payload: product,
+                          })
+                        }
+                      >
+                        {state.favoriteProducts.find(
+                          (favoriteProduct) => favoriteProduct.id === product.id
+                        ) ? (
+                          <FaHeart color="red" size={40} />
+                        ) : (
+                          <FaRegHeart color="red" size={40} />
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </li>
