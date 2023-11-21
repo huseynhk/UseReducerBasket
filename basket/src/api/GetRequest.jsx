@@ -1,8 +1,12 @@
 import axios from "axios";
 
+const Api = axios.create({
+  baseURL: "https://dummyjson.com/products",
+});
+
 export const GetProducts = async () => {
   try {
-    const response = await axios.get("https://dummyjson.com/products");
+    const response = await Api.get("/");
     if (response.status !== 200) {
       throw new Error("Error");
     } else {
@@ -15,9 +19,7 @@ export const GetProducts = async () => {
 
 export const GetSingleProduct = async (productId) => {
   try {
-    const response = await axios.get(
-      `https://dummyjson.com/products/${productId}`
-    );
+    const response = await Api.get(`/${productId}`);
     if (response.status !== 200) {
       throw new Error("Error");
     } else {

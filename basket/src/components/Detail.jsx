@@ -1,24 +1,25 @@
-import React, { useContext, useEffect } from "react";
-import { GlobalContext } from "../contexts/GlobalContext";
+import React, { useEffect } from "react";
+import { useGlobalContext } from "../contexts/GlobalContext";
 import { useParams } from "react-router-dom";
 import { GetSingleProduct } from "../api/GetRequest";
 
 const Detail = () => {
-  const { state, dispatch } = useContext(GlobalContext);
+  const { state, dispatch } = useGlobalContext();
   const { productId } = useParams();
 
   const fectchSingleProduct = async () => {
     const response = await GetSingleProduct(productId);
     dispatch({ type: "SELECTEDPRODUCT", payload: response });
   };
+
   useEffect(() => {
     fectchSingleProduct();
   }, [productId]);
 
   if (!state.selectedProduct) {
-    return <h1 className="mx-auto mt-24 text-white">Loading...</h1>;
+    return <h1 className="m-24 text-3xl text-violet-200">Loading...</h1>;
   }
-  const { title, description, price, brand , images } = state.selectedProduct;
+  const { title, description, price, brand, images } = state.selectedProduct;
 
   return (
     <>

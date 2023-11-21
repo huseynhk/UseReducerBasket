@@ -1,4 +1,4 @@
-import React, { createContext, useReducer } from "react";
+import React, { createContext, useContext, useReducer } from "react";
 import { toast } from "react-toastify";
 
 const GlobalContext = createContext();
@@ -7,7 +7,9 @@ const initialState = {
   basket: [],
   totalCount: 0,
   totalPrice: 0,
+  selectedProduct: null,
   filteredData: [],
+  favoriteProducts: [],
 };
 
 // {...state , basket:[...state.basket,{...action.payload , count:1} , totalCount:state.totalCount + 1]}
@@ -63,20 +65,29 @@ const reducer = (state, action) => {
           ? { ...product, count: product.count - 1 }
           : product
       );
-      localStorage.setItem("basket", JSON.stringify(decrementedBasket));
 
+      localStorage.setItem("basket", JSON.stringify(decrementedBasket));
+      const newTotalCount = decrementedBasket.reduce(
+        (acc, product) => acc + product.count,
+        0
+      );
+
+      const newTotalPrice = decrementedBasket.reduce(
+        (acc, product) => acc + product.count * product.price,
+        0
+      );
       return {
         ...state,
         basket: decrementedBasket,
-        totalCount: state.totalCount > 1 ? state.totalCount - 1 : 1,
-        totalPrice:
-          state.totalPrice - action.payload.price > 1
-            ? state.totalPrice - action.payload.price
-            : action.payload.price,
+        totalCount: newTotalCount,
+        totalPrice: newTotalPrice,
       };
 
     case "GET_LOCAL_STORAGE":
       const localBasket = JSON.parse(localStorage.getItem("basket")) || [];
+      const localFavoriteProducts =
+        JSON.parse(localStorage.getItem("favoriteProducts")) || [];
+
       const localTotalCount = localBasket.reduce(
         (acc, product) => acc + product.count,
         0
@@ -88,6 +99,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         basket: localBasket,
+        favoriteProducts: localFavoriteProducts,
         totalCount: localTotalCount,
         totalPrice: localTotalPrice,
       };
@@ -100,6 +112,10 @@ const reducer = (state, action) => {
         state.totalPrice - action.payload.count * action.payload.price;
       localStorage.setItem("basket", JSON.stringify(deletedProduct));
 
+      toast.success("Product deleted successfully!", {
+        autoClose: 1000,
+      });
+
       return {
         ...state,
         basket: deletedProduct,
@@ -111,8 +127,45 @@ const reducer = (state, action) => {
       localStorage.removeItem("basket");
       return { ...state, basket: [], totalCount: 0, totalPrice: 0 };
 
+    case "SELECTEDPRODUCT":
+      return { ...state, selectedProduct: action.payload };
+
     case "SET_FILTER":
       return { ...state, filteredData: action.payload };
+
+    case "SET_FAVORITE":
+      const findFavorite = state.favoriteProducts.find(
+        (favorite) => favorite.id === action.payload.id
+      );
+      let updatedFavorites;
+      if (findFavorite) {
+        updatedFavorites = state.favoriteProducts.filter(
+          (favorite) => favorite.id !== action.payload.id
+        );
+        toast.info("Product removed from favorites", {
+          autoClose: 1000,
+        });
+      } else {
+        updatedFavorites = [...state.favoriteProducts, action.payload];
+        toast.success("Product added to favorites", {
+          autoClose: 1000,
+        });
+      }
+      localStorage.setItem(
+        "favoriteProducts",
+        JSON.stringify(updatedFavorites)
+      );
+      return { ...state, favoriteProducts: updatedFavorites };
+
+    case "DELETEFAVORITE":
+      const deletedFavorite = state.favoriteProducts.filter(
+        (product) => product.id !== action.payload.id
+      );
+      localStorage.setItem("favoriteProducts", JSON.stringify(deletedFavorite));
+      toast.success("Product deleted successfully!", {
+        autoClose: 1000,
+      });
+      return { ...state, favoriteProducts: deletedFavorite };
 
     case "RESET":
       return { ...state, filteredData: state.data };
@@ -162,17 +215,40 @@ const GlobalProvider = ({ children }) => {
     dispatch({ type: "SET_FILTER", payload: searchData });
   };
 
+  // const handleFavorite = (product) => {
+  //   const findFavorite = state.favoriteProducts.find(
+  //     (favorite) => favorite.id === product.id
+  //   );
+  //   let updatedFavorites;
+  //   if (findFavorite) {
+  //     updatedFavorites = state.favoriteProducts.filter(
+  //       (favorite) => favorite.id !== product.id
+  //     );
+  //     dispatch({ type: "SET_FAVORITE", payload: updatedFavorites });
+  //     toast.info("Product removed from favorites", {
+  //       autoClose: 1000,
+  //     });
+  //   } else {
+  //     updatedFavorites = [...state.favoriteProducts, product];
+  //     dispatch({ type: "SET_FAVORITE", payload: updatedFavorites });
+  //     toast.success("Product added to favorites", {
+  //       autoClose: 1000,
+  //     });
+  //     localStorage.setItem(
+  //       "favoriteProducts",
+  //       JSON.stringify(updatedFavorites)
+  //     );
+  //   }
+  // };
+
   const contextValue = {
     state,
     dispatch,
     filterProducts,
     searchProducts,
   };
-  return (
-    <GlobalContext.Provider value={contextValue}>
-      {children}
-    </GlobalContext.Provider>
-  );
+  const Component = GlobalContext.Provider;
+  return <Component value={contextValue}>{children}</Component>;
 };
-
-export { GlobalContext, GlobalProvider };
+const useGlobalContext = () => useContext(GlobalContext);
+export { GlobalContext, GlobalProvider, useGlobalContext };
