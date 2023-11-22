@@ -28,7 +28,7 @@ const Products = () => {
 
   return (
     <>
-      <div className="bg-gray-700 p-3 flex flex-col justify-center items-center md:flex-row">
+      <div className="bg-gray-700 px-1 py-2  flex flex-col justify-center items-center md:flex-row">
         <input
           type="text"
           placeholder="Serach"
@@ -51,6 +51,8 @@ const Products = () => {
         >
           Reset
         </button>
+
+        
       </div>
 
       <div>

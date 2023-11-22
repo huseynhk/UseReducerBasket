@@ -15,8 +15,9 @@ const NavBar = () => {
   }, []);
 
   return (
-    <div className="bg-black  py-7 px-4 flex flex-col  items-center md:flex-row md:justify-center">
+    <div className="bg-black px-2  py-5 flex flex-col  items-center md:flex-row md:justify-center">
       <div className="flex justify-center items-center">
+        
         <Link to={ROUTER.Products} className="text-blue-200 text-2xl">
           <IoHome size={40} color="gray" />
         </Link>

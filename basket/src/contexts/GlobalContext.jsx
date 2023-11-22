@@ -251,4 +251,4 @@ const GlobalProvider = ({ children }) => {
   return <Component value={contextValue}>{children}</Component>;
 };
 const useGlobalContext = () => useContext(GlobalContext);
-export { GlobalContext, GlobalProvider, useGlobalContext };
+export { GlobalProvider, useGlobalContext };
